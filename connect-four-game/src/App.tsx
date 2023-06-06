@@ -1,13 +1,11 @@
-// import React from 'react'
+import React from 'react'
+import Mainmenu from './components/Mainmenu'
 
 function App() {
-
   return (
     <>
       <div>
-        <div className="">
-          hi
-        </div>
+        <Mainmenu />
       </div>
     </>
   )
