@@ -1,10 +1,13 @@
 import React from 'react'
-import Mainmenu from './components/Mainmenu'
+import { Mainmenu, GameBoard, Rules, Menu } from './components'
 
 function App() {
   return (
     <>
-      <div>
+      <div className='h-full'>
+        <Menu />
+        <Rules />
+        <GameBoard />
         <Mainmenu />
       </div>
     </>

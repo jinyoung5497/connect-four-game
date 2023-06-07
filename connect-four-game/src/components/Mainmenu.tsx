@@ -1,9 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   board_black_large,
+  board_black_small,
   board_white_large,
+  board_white_small,
   counter_red_large,
+  counter_red_small,
   counter_yellow_large,
+  counter_yellow_small,
   cpu,
   icon_check,
   logo,
@@ -18,66 +22,43 @@ import {
   you,
 } from '../assets'
 import { useSelector, useDispatch } from 'react-redux'
-import { RootState } from '../app/store'
-import { addReservation, removeReservation } from '../features/reservationSlice'
-import { addCustomer } from '../features/customerSlice'
+import { RootState } from '../slices/store'
+import { toggleMainMenu, pvpToggle } from '../slices/gameSlice'
 
 export default function Mainmenu() {
-  const reservations = useSelector(
-    (state: RootState) => state.reservations.value
-  )
-  const customers = useSelector((state: RootState) => state.customers.value)
   const dispatch = useDispatch()
-  const [reservationInput, setReservationInput] = useState('')
+  const games = useSelector((state: RootState) => state.games.value)
 
-  const handleAddReservation = () => {
-    if (!reservationInput) return
-    dispatch(addReservation(reservationInput))
-    setReservationInput('')
+  const openPVP = () => {
+    dispatch(pvpToggle())
   }
+
+  const openMenu = () => {
+    dispatch(toggleMainMenu())
+  }
+
+  useEffect(() => {
+    console.log(games.mainMenuToggle)
+  }, [games.mainMenuToggle])
 
   return (
     <>
-      <div>
-        {/* <img src={board_black_large} alt='' /> */}
-        <div>
-          {reservations.map((value, index) => {
-            return (
-              <div
-                onClick={() => {
-                  dispatch(removeReservation(index))
-                  dispatch(
-                    addCustomer({
-                      id: `${index}`,
-                      name: value,
-                      food: [value],
-                    })
-                  )
-                }}
-              >
-                {value}
-              </div>
-            )
-          })}
-          <input
-            type='text'
-            value={reservationInput}
-            onChange={(event) => setReservationInput(event?.target.value)}
-          />
-          <button onClick={handleAddReservation}>ADD</button>
-        </div>
-        <div>
-          {customers.map((value) => {
-            return (
-              <div>
-                <div>{value.id}</div>
-                <div>{value.name}</div>
-                {value.food.map((value) => (
-                  <div>{value}</div>
-                ))}
-              </div>
-            )
-          })}
+      <div className='bg-purple h-full flex items-center justify-center'>
+        <div className='bg-purple-light w-[500px] flex flex-col items-center justify-center p-5 px-10 rounded-3xl border-[3px] border-black border-b-[15px] '>
+          <img src={logo} alt='logo' className='my-10 mb-20' />
+          <div
+            className='flex bg-yellow items-center justify-between mb-5 p-4 rounded-3xl w-full border-[3px] border-black border-b-[10px] cursor-pointer'
+            onClick={openPVP}
+          >
+            <p className='font-bold text-lg'>PLAYER VS PLAYER</p>
+            <img src={pvp} alt='pvp' />
+          </div>
+          <div
+            className='flex bg-white items-center justify-between mb-10 p-4 rounded-3xl w-full border-[3px] border-black border-b-[10px] cursor-pointer'
+            onClick={openMenu}
+          >
+            <p className='font-bold text-lg cursor-pointer'>GAME RULES</p>
+          </div>
         </div>
       </div>
     </>
