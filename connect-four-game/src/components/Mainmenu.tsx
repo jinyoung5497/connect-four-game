@@ -17,44 +17,68 @@ import {
   bg_yellow,
   you,
 } from '../assets'
-import { useSelector } from 'react-redux'
-import { RootState } from './store'
-import { useDispatch } from 'react-redux'
-import { login, logout } from './store'
+import { useSelector, useDispatch } from 'react-redux'
+import { RootState } from '../app/store'
+import { addReservation, removeReservation } from '../features/reservationSlice'
+import { addCustomer } from '../features/customerSlice'
 
 export default function Mainmenu() {
-  const user = useSelector((state: RootState) => state.user)
+  const reservations = useSelector(
+    (state: RootState) => state.reservations.value
+  )
+  const customers = useSelector((state: RootState) => state.customers.value)
   const dispatch = useDispatch()
+  const [reservationInput, setReservationInput] = useState('')
+
+  const handleAddReservation = () => {
+    if (!reservationInput) return
+    dispatch(addReservation(reservationInput))
+    setReservationInput('')
+  }
 
   return (
     <>
       <div>
-        <div>Name: {user.name}</div>
-        <div>Age: {user.age}</div>
-        <div>Email: {user.email}</div>
-        <div>Toggle: {`${user.toggle}`}</div>
         {/* <img src={board_black_large} alt='' /> */}
-        <button
-          onClick={() =>
-            dispatch(
-              login({
-                name: 'pedro',
-                age: 25,
-                email: 'pedro.com',
-                toggle: true,
-              })
+        <div>
+          {reservations.map((value, index) => {
+            return (
+              <div
+                onClick={() => {
+                  dispatch(removeReservation(index))
+                  dispatch(
+                    addCustomer({
+                      id: `${index}`,
+                      name: value,
+                      food: [value],
+                    })
+                  )
+                }}
+              >
+                {value}
+              </div>
             )
-          }
-        >
-          Name Change
-        </button>
-        <button
-          onClick={() =>
-            dispatch(logout({ name: '', age: 0, email: '', toggle: false }))
-          }
-        >
-          Logout
-        </button>
+          })}
+          <input
+            type='text'
+            value={reservationInput}
+            onChange={(event) => setReservationInput(event?.target.value)}
+          />
+          <button onClick={handleAddReservation}>ADD</button>
+        </div>
+        <div>
+          {customers.map((value) => {
+            return (
+              <div>
+                <div>{value.id}</div>
+                <div>{value.name}</div>
+                {value.food.map((value) => (
+                  <div>{value}</div>
+                ))}
+              </div>
+            )
+          })}
+        </div>
       </div>
     </>
   )
