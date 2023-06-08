@@ -31,30 +31,31 @@ export default function Mainmenu() {
 
   const openPVP = () => {
     dispatch(pvpToggle())
+    dispatch(toggleMainMenu())
   }
 
   const openMenu = () => {
     dispatch(toggleMainMenu())
   }
 
-  useEffect(() => {
-    console.log(games.mainMenuToggle)
-  }, [games.mainMenuToggle])
-
   return (
     <>
-      <div className='bg-purple h-full flex items-center justify-center'>
-        <div className='bg-purple-light w-[500px] flex flex-col items-center justify-center p-5 px-10 rounded-3xl border-[3px] border-black border-b-[15px] '>
+      <div
+        className={`bg-purple h-full flex items-center justify-center ${
+          games.mainMenuToggle ? 'hidden' : 'block'
+        }`}
+      >
+        <div className='bg-purple-light w-[500px] flex flex-col items-center justify-center p-5 px-10 rounded-[50px] border-[3px] border-black drop-shadow-[0_10px_0_rgb(0,0,0)]  '>
           <img src={logo} alt='logo' className='my-10 mb-20' />
           <div
-            className='flex bg-yellow items-center justify-between mb-5 p-4 rounded-3xl w-full border-[3px] border-black border-b-[10px] cursor-pointer'
+            className='flex bg-yellow items-center justify-between mb-8 p-4 rounded-3xl w-full border-[3px] border-black drop-shadow-[0_10px_0_rgb(0,0,0)]  cursor-pointer hover:drop-shadow-[0_10px_0_#5C2DD5]'
             onClick={openPVP}
           >
             <p className='font-bold text-lg'>PLAYER VS PLAYER</p>
             <img src={pvp} alt='pvp' />
           </div>
           <div
-            className='flex bg-white items-center justify-between mb-10 p-4 rounded-3xl w-full border-[3px] border-black border-b-[10px] cursor-pointer'
+            className='flex bg-white items-center justify-between mb-10 p-4 rounded-3xl w-full border-[3px] border-black drop-shadow-[0_10px_0_rgb(0,0,0)] cursor-pointer hover:drop-shadow-[0_10px_0_#5C2DD5]'
             onClick={openMenu}
           >
             <p className='font-bold text-lg cursor-pointer'>GAME RULES</p>

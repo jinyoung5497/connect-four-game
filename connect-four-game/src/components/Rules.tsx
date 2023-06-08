@@ -65,7 +65,7 @@ export default function Rules() {
             src={icon_check}
             alt='icon_check'
             onClick={menuClose}
-            className='absolute bottom-40 cursor-pointer'
+            className='absolute bottom-40 cursor-pointer '
           />
         </div>
       </div>
