@@ -29,7 +29,6 @@ import {
   restart,
   playerTurn,
   winCondition,
-  getRows,
 } from '../slices/gameSlice'
 
 export default function GameBoard() {
@@ -43,13 +42,13 @@ export default function GameBoard() {
 
   const handleColumn = (index: number) => {
     dispatch(addCounter(index))
-    dispatch(playerTurn())
-    dispatch(winCondition(index))
-    dispatch(getRows(games.boards[index].length - 1))
-    console.log(games.boards)
-    console.log(index)
-    console.log(games.boards[index].length - 1)
+    dispatch(playerTurn(index))
+    dispatch(winCondition({ cols: index, rows: games.boards[index].length }))
   }
+
+  useEffect(() => {
+    console.log(games.boards)
+  }, [games.boards])
 
   const handleRestart = () => {
     dispatch(restart())
