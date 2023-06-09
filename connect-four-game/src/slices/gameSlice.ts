@@ -10,6 +10,7 @@ interface GameState {
     gameOver: boolean
     playerOneWin: boolean
     playerTwoWin: boolean
+    getRows: number
   }
 }
 
@@ -23,6 +24,7 @@ const initialState: GameState = {
     gameOver: false,
     playerOneWin: false,
     playerTwoWin: false,
+    getRows: 0,
   },
 }
 
@@ -63,88 +65,176 @@ export const gameSlice = createSlice({
     playerTurn: (state) => {
       state.value.playerTurn = !state.value.playerTurn
     },
-    winCondition: (state) => {
-      for (let i = 0; i < 7; i++) {
-        for (let j = 0; j < 6; j++) {
+    getRows: (state, action: PayloadAction<number>) => {
+      state.value.getRows = action.payload
+    },
+    winCondition: (state, action: PayloadAction<number>) => {
+      if (action.payload < 4) {
+        for (let j = 1; j < 4; j++) {
           if (
-            state.value.boards[i][j] === 'o' &&
-            state.value.boards[i][j + 1] === 'o' &&
-            state.value.boards[i][j + 2] === 'o' &&
-            state.value.boards[i][j + 3] === 'o'
+            state.value.boards[action.payload][j] === 'o' &&
+            state.value.boards[action.payload][j + 1] === 'o' &&
+            state.value.boards[action.payload][j + 2] === 'o' &&
+            state.value.boards[action.payload][j + 3] === 'o'
           ) {
             state.value.gameOver = true
             state.value.playerOneWin = true
             console.log('option 1')
           }
           if (
-            state.value.boards[i][j] === 'x' &&
-            state.value.boards[i][j + 1] === 'x' &&
-            state.value.boards[i][j + 2] === 'x' &&
-            state.value.boards[i][j + 3] === 'x'
+            state.value.boards[action.payload][j] === 'x' &&
+            state.value.boards[action.payload][j + 1] === 'x' &&
+            state.value.boards[action.payload][j + 2] === 'x' &&
+            state.value.boards[action.payload][j + 3] === 'x'
           ) {
             state.value.gameOver = true
             state.value.playerTwoWin = true
             console.log('option 2')
           }
           if (
-            state.value.boards[i][j] === 'o' &&
-            state.value.boards[i + 1][j] === 'o' &&
-            state.value.boards[i + 2][j] === 'o' &&
-            state.value.boards[i + 3][j] === 'o'
+            state.value.boards[action.payload][j] === 'o' &&
+            state.value.boards[action.payload + 1][j] === 'o' &&
+            state.value.boards[action.payload + 2][j] === 'o' &&
+            state.value.boards[action.payload + 3][j] === 'o'
           ) {
             state.value.gameOver = true
             state.value.playerOneWin = true
             console.log('option 3')
           }
           if (
-            state.value.boards[i][j] === 'x' &&
-            state.value.boards[i + 1][j] === 'x' &&
-            state.value.boards[i + 2][j] === 'x' &&
-            state.value.boards[i + 3][j] === 'x'
+            state.value.boards[action.payload][j] === 'x' &&
+            state.value.boards[action.payload + 1][j] === 'x' &&
+            state.value.boards[action.payload + 2][j] === 'x' &&
+            state.value.boards[action.payload + 3][j] === 'x'
           ) {
             state.value.gameOver = true
             state.value.playerTwoWin = true
             console.log('option 4')
           }
           if (
-            state.value.boards[i][j] === 'o' &&
-            state.value.boards[i + 1][j + 1] === 'o' &&
-            state.value.boards[i + 2][j + 2] === 'o' &&
-            state.value.boards[i + 2][j + 2] === 'o'
+            state.value.boards[action.payload][j] === 'o' &&
+            state.value.boards[action.payload + 1][j + 1] === 'o' &&
+            state.value.boards[action.payload + 2][j + 2] === 'o' &&
+            state.value.boards[action.payload + 3][j + 3] === 'o'
           ) {
             state.value.gameOver = true
             state.value.playerTwoWin = true
             console.log('option 5')
           }
           if (
-            state.value.boards[i][j] === 'x' &&
-            state.value.boards[i + 1][j + 1] === 'x' &&
-            state.value.boards[i + 2][j + 2] === 'x' &&
-            state.value.boards[i + 2][j + 2] === 'x'
+            state.value.boards[action.payload][j] === 'x' &&
+            state.value.boards[action.payload + 1][j + 1] === 'x' &&
+            state.value.boards[action.payload + 2][j + 2] === 'x' &&
+            state.value.boards[action.payload + 3][j + 3] === 'x'
           ) {
             state.value.gameOver = true
             state.value.playerTwoWin = true
             console.log('option 6')
           }
+          // if (
+          //   state.value.boards[i][j] === 'o' &&
+          //   state.value.boards[i + 1][j - 1] === 'o' &&
+          //   state.value.boards[i + 2][j - 2] === 'o' &&
+          //   state.value.boards[i + 3][j - 3] === 'o'
+          // ) {
+          //   state.value.gameOver = true
+          //   state.value.playerTwoWin = true
+          //   console.log('option 7')
+          // }
+          // if (
+          //   state.value.boards[i][j] === 'x' &&
+          //   state.value.boards[i + 1][j - 1] === 'x' &&
+          //   state.value.boards[i + 2][j - 2] === 'x' &&
+          //   state.value.boards[i + 3][j - 3] === 'x'
+          // ) {
+          //   state.value.gameOver = true
+          //   state.value.playerTwoWin = true
+          //   console.log('option 8')
+          // }
+        }
+      }
+
+      if (action.payload >= 4) {
+        for (let j = 3; j < 7; j++) {
           if (
-            state.value.boards[i][j] === 'o' &&
-            state.value.boards[i - 1][j - 1] === 'o' &&
-            state.value.boards[i - 2][j - 2] === 'o' &&
-            state.value.boards[i - 2][j - 2] === 'o'
+            state.value.boards[action.payload][j] === 'o' &&
+            state.value.boards[action.payload][j + 1] === 'o' &&
+            state.value.boards[action.payload][j + 2] === 'o' &&
+            state.value.boards[action.payload][j + 3] === 'o'
           ) {
             state.value.gameOver = true
-            state.value.playerTwoWin = true
-            console.log('option 7')
+            state.value.playerOneWin = true
+            console.log('new option 1')
           }
           if (
-            state.value.boards[i][j] === 'x' &&
-            state.value.boards[i - 1][j - 1] === 'x' &&
-            state.value.boards[i - 2][j - 2] === 'x' &&
-            state.value.boards[i - 2][j - 2] === 'x'
+            state.value.boards[action.payload][j] === 'x' &&
+            state.value.boards[action.payload][j + 1] === 'x' &&
+            state.value.boards[action.payload][j + 2] === 'x' &&
+            state.value.boards[action.payload][j + 3] === 'x'
           ) {
             state.value.gameOver = true
             state.value.playerTwoWin = true
-            console.log('option 8')
+            console.log('new option 2')
+          }
+          // if (
+          //   state.value.boards[action.payload][j] === 'o' &&
+          //   state.value.boards[action.payload + 1][j] === 'o' &&
+          //   state.value.boards[action.payload + 2][j] === 'o' &&
+          //   state.value.boards[action.payload + 3][j] === 'o'
+          // ) {
+          //   state.value.gameOver = true
+          //   state.value.playerOneWin = true
+          //   console.log('new option 3')
+          // }
+          // if (
+          //   state.value.boards[action.payload][j] === 'x' &&
+          //   state.value.boards[action.payload + 1][j] === 'x' &&
+          //   state.value.boards[action.payload + 2][j] === 'x' &&
+          //   state.value.boards[action.payload + 3][j] === 'x'
+          // ) {
+          //   state.value.gameOver = true
+          //   state.value.playerTwoWin = true
+          //   console.log('new option 4')
+          // }
+          if (
+            state.value.boards[action.payload][j] === 'o' &&
+            state.value.boards[action.payload + 1][j + 1] === 'o' &&
+            state.value.boards[action.payload + 2][j + 2] === 'o' &&
+            state.value.boards[action.payload + 3][j + 3] === 'o'
+          ) {
+            state.value.gameOver = true
+            state.value.playerTwoWin = true
+            console.log('new option 5')
+          }
+          if (
+            state.value.boards[action.payload][j] === 'x' &&
+            state.value.boards[action.payload + 1][j + 1] === 'x' &&
+            state.value.boards[action.payload + 2][j + 2] === 'x' &&
+            state.value.boards[action.payload + 3][j + 3] === 'x'
+          ) {
+            state.value.gameOver = true
+            state.value.playerTwoWin = true
+            console.log('new option 6')
+          }
+          if (
+            state.value.boards[action.payload][j] === 'o' &&
+            state.value.boards[action.payload + 1][j - 1] === 'o' &&
+            state.value.boards[action.payload + 2][j - 2] === 'o' &&
+            state.value.boards[action.payload + 3][j - 3] === 'o'
+          ) {
+            state.value.gameOver = true
+            state.value.playerTwoWin = true
+            console.log('new option 7')
+          }
+          if (
+            state.value.boards[action.payload][j] === 'x' &&
+            state.value.boards[action.payload + 1][j - 1] === 'x' &&
+            state.value.boards[action.payload + 2][j - 2] === 'x' &&
+            state.value.boards[action.payload + 3][j - 3] === 'x'
+          ) {
+            state.value.gameOver = true
+            state.value.playerTwoWin = true
+            console.log('new option 8')
           }
         }
       }
@@ -161,5 +251,6 @@ export const {
   restart,
   playerTurn,
   winCondition,
+  getRows,
 } = gameSlice.actions
 export default gameSlice.reducer
