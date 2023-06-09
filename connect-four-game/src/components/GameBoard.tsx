@@ -86,7 +86,7 @@ export default function GameBoard() {
               className='absolute bottom-36'
             />
             <p className='mt-7 text-lg font-bold'>PLAYER 1</p>
-            <p className='text-xl font-bold'>12</p>
+            <p className='text-xl font-bold'>{games.playerOneScore}</p>
           </div>
           {/* GAMEBOARD */}
           <div className='grid grid-cols-1 grid-row-1  w-fit mx-14 z-10'>
@@ -157,18 +157,28 @@ export default function GameBoard() {
               className='absolute bottom-36'
             />
             <p className='mt-7 text-lg font-bold'>PLAYER 2</p>
-            <p className='text-xl font-bold'>22</p>
+            <p className='text-xl font-bold'>{games.playerTwoScore}</p>
           </div>
         </div>
         {/* TIMER */}
         <div className='z-10 flex flex-col items-center justify-center'>
-          <img src={bg_red} alt='bg_red' className='absolute bottom-10' />
+          <img
+            src={games.playerTurn ? bg_yellow : bg_red}
+            alt='bg_red'
+            className='absolute bottom-10'
+          />
           <p className='text-white relative bottom-3'>YOUR TURN</p>
-          <p className='text-white relative text-xl bottom-3'>15s</p>
+          <p className='text-white relative text-xl bottom-3'>{games.timer}s</p>
           {games.gameOver && <div>hi</div>}
         </div>
         {/* background */}
-        <div className='absolute bottom-0 bg-purple w-full h-[200px] rounded-t-[60px]'></div>
+        <div
+          className={`absolute bottom-0  ${games.playerOneWin && 'bg-pink'}  ${
+            games.playerTwoWin && 'bg-yellow'
+          } ${
+            !games.playerOneWin && !games.playerTwoWin && 'bg-purple'
+          } w-full h-[200px] rounded-t-[60px]`}
+        ></div>
       </div>
     </>
   )

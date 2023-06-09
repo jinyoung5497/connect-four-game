@@ -10,6 +10,10 @@ interface GameState {
     gameOver: boolean
     playerOneWin: boolean
     playerTwoWin: boolean
+    playerOneScore: number
+    playerTwoScore: number
+    timer: number
+    time: number | null
   }
 }
 
@@ -23,6 +27,10 @@ const initialState: GameState = {
     gameOver: false,
     playerOneWin: false,
     playerTwoWin: false,
+    playerOneScore: 0,
+    playerTwoScore: 0,
+    timer: 15,
+    time: null,
   },
 }
 
@@ -48,6 +56,13 @@ export const gameSlice = createSlice({
       state.value.pvpToggle = false
       state.value.mainMenuToggle = false
       state.value.menuToggle = false
+      state.value.gameOver = false
+      state.value.playerTurn = false
+      state.value.boards = [[''], [''], [''], [''], [''], [''], ['']]
+      state.value.playerOneWin = false
+      state.value.playerTwoWin = false
+      state.value.playerOneScore = 0
+      state.value.playerTwoScore = 0
     },
     addCounter: (state, action: PayloadAction<number>) => {
       if (state.value.boards[action.payload].length <= 6) {
@@ -64,6 +79,8 @@ export const gameSlice = createSlice({
       state.value.gameOver = false
       state.value.playerOneWin = false
       state.value.playerTwoWin = false
+      state.value.playerOneScore = 0
+      state.value.playerTwoScore = 0
     },
     playerTurn: (state, action: PayloadAction<number>) => {
       if (state.value.boards[action.payload].length == 7) {
@@ -71,6 +88,40 @@ export const gameSlice = createSlice({
       } else {
         state.value.playerTurn = !state.value.playerTurn
       }
+    },
+    playerScore: (state) => {
+      if (state.value.playerOneWin) {
+        state.value.playerOneScore++
+      }
+      if (state.value.playerTwoWin) {
+        state.value.playerTwoScore++
+      }
+      state.value.boards = [[''], [''], [''], [''], [''], [''], ['']]
+      state.value.gameOver = false
+      state.value.playerOneWin = false
+      state.value.playerTwoWin = false
+    },
+    startTimer: (state) => {
+      console.log('time start')
+      let time = state.value.timer
+      const timer = setInterval(() => {
+        time--
+        console.log(time)
+        state.value.timer = time
+        if (time == 0) {
+          console.log('time over')
+          clearInterval(timer)
+          state.value.timer = 15
+        }
+      }, 1000)
+    },
+    stopTimer: (state) => {
+      console.log('pause timer')
+      clearInterval(state.value.time!)
+    },
+    resetTimer: (state) => {
+      console.log('time reset')
+      state.value.timer = 15
     },
     winCondition: (state, action: PayloadAction<WinConditionPayload>) => {
       const { cols, rows } = action.payload
@@ -178,5 +229,8 @@ export const {
   restart,
   playerTurn,
   winCondition,
+  playerScore,
+  startTimer,
+  resetTimer,
 } = gameSlice.actions
 export default gameSlice.reducer
