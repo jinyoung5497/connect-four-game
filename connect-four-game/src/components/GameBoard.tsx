@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   board_black_large,
   board_black_small,
@@ -29,20 +29,26 @@ import {
   restart,
   playerTurn,
   winCondition,
+  startTimer,
+  resetTimer,
+  stopTimer,
 } from '../slices/gameSlice'
 
 export default function GameBoard() {
   const dispatch = useDispatch()
   const games = useSelector((state: RootState) => state.games.value)
   const [fallAnimation, setFallAnimation] = useState(true)
+  const [time, setTime] = useState(15)
 
   const openMenu = () => {
     dispatch(menuToggle())
+    dispatch(stopTimer(true))
   }
 
   const handleColumn = (index: number) => {
+    setTime(15)
     dispatch(addCounter(index))
-    dispatch(playerTurn(index))
+    dispatch(playerTurn())
     dispatch(winCondition({ cols: index, rows: games.boards[index].length }))
   }
 
@@ -52,7 +58,41 @@ export default function GameBoard() {
 
   const handleRestart = () => {
     dispatch(restart())
+    setTime(15)
+    dispatch(startTimer(true))
+    dispatch(stopTimer(false))
   }
+
+  useEffect(() => {
+    let intervalId: number = 15
+    if (games.resetTimer) {
+      setTime(15)
+      dispatch(resetTimer(false))
+    }
+    if (games.startTimer) {
+      intervalId = setInterval(() => {
+        setTime((prev) => prev - 1)
+      }, 1000)
+    }
+    if (games.stopTimer) {
+      clearInterval(intervalId)
+    }
+
+    if (time === 0) {
+      clearInterval(intervalId)
+      setTime(15)
+      dispatch(playerTurn())
+    }
+
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [games.startTimer, time, games.stopTimer])
+
+  // animation (marker)
+  // keyboard movement
+  // cpu algorithm
+  // responsive design
 
   return (
     <>
@@ -113,16 +153,44 @@ export default function GameBoard() {
                           }`}
                         >
                           {games.boards[i][index] == 'o' && (
-                            <img
-                              src={counter_red_large}
-                              alt='counter_red_large'
-                            />
+                            <div>
+                              <img
+                                src={counter_red_large}
+                                alt='counter_red_large'
+                              />
+                            </div>
+                          )}
+                          {games.boards[i][index] == 'v' && (
+                            <div>
+                              {games.playerOneWin && (
+                                <div>
+                                  <img
+                                    src={counter_red_large}
+                                    alt='counter_red_large'
+                                  />
+                                  <div className='absolute top-[17px] left-[17px] bg-white w-9 h-9 rounded-full'></div>
+                                  <div className='absolute top-[23px] left-[23px] bg-pink w-6 h-6 rounded-full'></div>
+                                </div>
+                              )}
+                              {games.playerTwoWin && (
+                                <div>
+                                  <img
+                                    src={counter_yellow_large}
+                                    alt='counter_yellow_large'
+                                  />
+                                  <div className='absolute top-[17px] left-[17px] bg-white w-9 h-9 rounded-full'></div>
+                                  <div className='absolute top-[23px] left-[23px] bg-yellow w-6 h-6 rounded-full'></div>
+                                </div>
+                              )}
+                            </div>
                           )}
                           {games.boards[i][index] == 'x' && (
-                            <img
-                              src={counter_yellow_large}
-                              alt='counter_yellow_large'
-                            />
+                            <div>
+                              <img
+                                src={counter_yellow_large}
+                                alt='counter_yellow_large'
+                              />
+                            </div>
                           )}
                         </div>
                       )
@@ -137,7 +205,9 @@ export default function GameBoard() {
                 return (
                   <div
                     key={index}
-                    className=' w-full'
+                    className={` w-full cursor-pointer ${
+                      games.boards[index].length == 7 && 'pointer-events-none'
+                    } `}
                     onClick={() => handleColumn(index)}
                   ></div>
                 )
@@ -167,8 +237,10 @@ export default function GameBoard() {
             alt='bg_red'
             className='absolute bottom-10'
           />
-          <p className='text-white relative bottom-3'>YOUR TURN</p>
-          <p className='text-white relative text-xl bottom-3'>{games.timer}s</p>
+          <p className='text-white relative bottom-3'>
+            {games.playerTurn ? "PLAYER 2'S" : "PLAYER 1'S"} TURN
+          </p>
+          <p className='text-white relative text-xl bottom-3'>{time}s</p>
           {games.gameOver && <div>hi</div>}
         </div>
         {/* background */}

@@ -14,6 +14,10 @@ interface GameState {
     playerTwoScore: number
     timer: number
     time: number | null
+    startTimer: boolean
+    stopTimer: boolean
+    resetTimer: boolean
+    stalemate: boolean
   }
 }
 
@@ -31,6 +35,10 @@ const initialState: GameState = {
     playerTwoScore: 0,
     timer: 15,
     time: null,
+    startTimer: false,
+    stopTimer: false,
+    resetTimer: false,
+    stalemate: false,
   },
 }
 
@@ -82,12 +90,8 @@ export const gameSlice = createSlice({
       state.value.playerOneScore = 0
       state.value.playerTwoScore = 0
     },
-    playerTurn: (state, action: PayloadAction<number>) => {
-      if (state.value.boards[action.payload].length == 7) {
-        state.value.playerTurn = state.value.playerTurn
-      } else {
-        state.value.playerTurn = !state.value.playerTurn
-      }
+    playerTurn: (state) => {
+      state.value.playerTurn = !state.value.playerTurn
     },
     playerScore: (state) => {
       if (state.value.playerOneWin) {
@@ -100,28 +104,22 @@ export const gameSlice = createSlice({
       state.value.gameOver = false
       state.value.playerOneWin = false
       state.value.playerTwoWin = false
+      state.value.stalemate = false
     },
-    startTimer: (state) => {
+    timer: (state) => {
+      state.value.timer--
+    },
+    startTimer: (state, action: PayloadAction<boolean>) => {
       console.log('time start')
-      let time = state.value.timer
-      const timer = setInterval(() => {
-        time--
-        console.log(time)
-        state.value.timer = time
-        if (time == 0) {
-          console.log('time over')
-          clearInterval(timer)
-          state.value.timer = 15
-        }
-      }, 1000)
+      state.value.startTimer = action.payload
     },
-    stopTimer: (state) => {
+    stopTimer: (state, action: PayloadAction<boolean>) => {
       console.log('pause timer')
-      clearInterval(state.value.time!)
+      state.value.stopTimer = action.payload
     },
-    resetTimer: (state) => {
+    resetTimer: (state, action: PayloadAction<boolean>) => {
       console.log('time reset')
-      state.value.timer = 15
+      state.value.resetTimer = action.payload
     },
     winCondition: (state, action: PayloadAction<WinConditionPayload>) => {
       const { cols, rows } = action.payload
@@ -134,9 +132,13 @@ export const gameSlice = createSlice({
         state.value.boards[cols][rows - 2] === 'o' &&
         state.value.boards[cols][rows - 3] === 'o'
       ) {
+        state.value.boards[cols][rows] = 'v'
+        state.value.boards[cols][rows - 1] = 'v'
+        state.value.boards[cols][rows - 2] = 'v'
+        state.value.boards[cols][rows - 3] = 'v'
         state.value.gameOver = true
         state.value.playerOneWin = true
-        console.log('option 1')
+        state.value.stopTimer = true
       }
       if (
         state.value.boards[cols][rows] === 'x' &&
@@ -144,9 +146,13 @@ export const gameSlice = createSlice({
         state.value.boards[cols][rows - 2] === 'x' &&
         state.value.boards[cols][rows - 3] === 'x'
       ) {
+        state.value.boards[cols][rows] = 'v'
+        state.value.boards[cols][rows - 1] = 'v'
+        state.value.boards[cols][rows - 2] = 'v'
+        state.value.boards[cols][rows - 3] = 'v'
         state.value.gameOver = true
         state.value.playerTwoWin = true
-        console.log('option 2')
+        state.value.stopTimer = true
       }
       // HORIZONTAL WIN CONDITION
       for (let i = 0; i <= 3; i++) {
@@ -156,8 +162,13 @@ export const gameSlice = createSlice({
           state.value.boards[i + 2][rows] === 'o' &&
           state.value.boards[i + 3][rows] === 'o'
         ) {
+          state.value.boards[i][rows] = 'v'
+          state.value.boards[i + 1][rows] = 'v'
+          state.value.boards[i + 2][rows] = 'v'
+          state.value.boards[i + 3][rows] = 'v'
           state.value.gameOver = true
           state.value.playerOneWin = true
+          state.value.stopTimer = true
         }
         if (
           state.value.boards[i][rows] === 'x' &&
@@ -165,8 +176,13 @@ export const gameSlice = createSlice({
           state.value.boards[i + 2][rows] === 'x' &&
           state.value.boards[i + 3][rows] === 'x'
         ) {
+          state.value.boards[i][rows] = 'v'
+          state.value.boards[i + 1][rows] = 'v'
+          state.value.boards[i + 2][rows] = 'v'
+          state.value.boards[i + 3][rows] = 'v'
           state.value.gameOver = true
           state.value.playerTwoWin = true
+          state.value.stopTimer = true
         }
       }
       // DIAGONAL POSITIVE WIN CONDITION
@@ -180,8 +196,13 @@ export const gameSlice = createSlice({
                 state.value.boards[i + 2][j + 2] === 'o' &&
                 state.value.boards[i + 3][j + 3] === 'o'
               ) {
+                state.value.boards[i][j] = 'v'
+                state.value.boards[i + 1][j + 1] = 'v'
+                state.value.boards[i + 2][j + 2] = 'v'
+                state.value.boards[i + 3][j + 3] = 'v'
                 state.value.gameOver = true
                 state.value.playerOneWin = true
+                state.value.stopTimer = true
               }
               if (
                 state.value.boards[i][j] === 'x' &&
@@ -189,8 +210,13 @@ export const gameSlice = createSlice({
                 state.value.boards[i + 2][j + 2] === 'x' &&
                 state.value.boards[i + 3][j + 3] === 'x'
               ) {
+                state.value.boards[i][j] = 'v'
+                state.value.boards[i + 1][j + 1] = 'v'
+                state.value.boards[i + 2][j + 2] = 'v'
+                state.value.boards[i + 3][j + 3] = 'v'
                 state.value.gameOver = true
                 state.value.playerTwoWin = true
+                state.value.stopTimer = true
               }
             }
             for (let j = 4; j <= 6; j++) {
@@ -200,8 +226,13 @@ export const gameSlice = createSlice({
                 state.value.boards[i + 2][j - 2] === 'o' &&
                 state.value.boards[i + 3][j - 3] === 'o'
               ) {
+                state.value.boards[i][j] = 'v'
+                state.value.boards[i + 1][j - 1] = 'v'
+                state.value.boards[i + 2][j - 2] = 'v'
+                state.value.boards[i + 3][j - 3] = 'v'
                 state.value.gameOver = true
                 state.value.playerOneWin = true
+                state.value.stopTimer = true
               }
               if (
                 state.value.boards[i][j] === 'x' &&
@@ -209,12 +240,33 @@ export const gameSlice = createSlice({
                 state.value.boards[i + 2][j - 2] === 'x' &&
                 state.value.boards[i + 3][j - 3] === 'x'
               ) {
+                state.value.boards[i][j] = 'v'
+                state.value.boards[i + 1][j - 1] = 'v'
+                state.value.boards[i + 2][j - 2] = 'v'
+                state.value.boards[i + 3][j - 3] = 'v'
                 state.value.gameOver = true
                 state.value.playerTwoWin = true
+                state.value.stopTimer = true
               }
             }
           }
         }
+      }
+      // STALEMATE CONDITION
+      if (
+        state.value.boards[0].length == 7 &&
+        state.value.boards[1].length == 7 &&
+        state.value.boards[2].length == 7 &&
+        state.value.boards[3].length == 7 &&
+        state.value.boards[4].length == 7 &&
+        state.value.boards[5].length == 7 &&
+        state.value.boards[6].length == 7
+      ) {
+        state.value.gameOver = true
+        state.value.stalemate = true
+        state.value.playerOneWin = false
+        state.value.playerTwoWin = false
+        state.value.stopTimer = true
       }
     },
   },
@@ -231,6 +283,8 @@ export const {
   winCondition,
   playerScore,
   startTimer,
+  stopTimer,
   resetTimer,
+  timer,
 } = gameSlice.actions
 export default gameSlice.reducer

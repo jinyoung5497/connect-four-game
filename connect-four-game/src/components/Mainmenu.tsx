@@ -23,7 +23,12 @@ import {
 } from '../assets'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../slices/store'
-import { toggleMainMenu, pvpToggle, startTimer } from '../slices/gameSlice'
+import {
+  toggleMainMenu,
+  pvpToggle,
+  startTimer,
+  stopTimer,
+} from '../slices/gameSlice'
 
 export default function Mainmenu() {
   const dispatch = useDispatch()
@@ -32,7 +37,8 @@ export default function Mainmenu() {
   const openPVP = () => {
     dispatch(pvpToggle())
     dispatch(toggleMainMenu())
-    dispatch(startTimer())
+    dispatch(startTimer(true))
+    dispatch(stopTimer(false))
   }
 
   const openMenu = () => {

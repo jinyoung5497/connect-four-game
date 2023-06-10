@@ -1,16 +1,37 @@
 import React, { useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../slices/store'
-import { menuToggle, quitGame, restart } from '../slices/gameSlice'
+import {
+  menuToggle,
+  quitGame,
+  resetTimer,
+  restart,
+  startTimer,
+  stopTimer,
+} from '../slices/gameSlice'
 
 export default function Menu() {
   const games = useSelector((state: RootState) => state.games.value)
   const dispatch = useDispatch()
   const modalRef = useRef<HTMLDivElement>(null)
 
+  const continueGame = () => {
+    dispatch(menuToggle())
+    dispatch(startTimer(true))
+    dispatch(stopTimer(false))
+  }
+
   const handleRestart = () => {
     dispatch(restart())
     dispatch(menuToggle())
+    dispatch(resetTimer(true))
+    dispatch(startTimer(true))
+    dispatch(stopTimer(false))
+  }
+
+  const quitingGame = () => {
+    dispatch(quitGame())
+    dispatch(resetTimer(true))
   }
 
   useEffect(() => {
@@ -27,7 +48,7 @@ export default function Menu() {
 
   const handleOutsideClick = (e: MouseEvent) => {
     if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
-      dispatch(menuToggle())
+      continueGame()
     }
   }
 
@@ -45,7 +66,7 @@ export default function Menu() {
           <h1 className='text-xl font-bold text-white mb-10'>PAUSE</h1>
           <button
             className='bg-white p-5 w-full mb-6 border-[3px] border-black drop-shadow-[0_10px_0_rgb(0,0,0)] rounded-3xl font-bold text-lg hover:drop-shadow-[0_10px_0_#5C2DD5]'
-            onClick={() => dispatch(menuToggle())}
+            onClick={continueGame}
           >
             CONTINUE GAME
           </button>
@@ -57,7 +78,7 @@ export default function Menu() {
           </button>
           <button
             className='bg-pink p-5 w-full border-[3px] border-black drop-shadow-[0_10px_0_rgb(0,0,0)] rounded-3xl text-white font-bold text-lg hover:drop-shadow-[0_10px_0_#5C2DD5]'
-            onClick={() => dispatch(quitGame())}
+            onClick={quitingGame}
           >
             QUIT GAME
           </button>
