@@ -32,13 +32,19 @@ import {
   startTimer,
   resetTimer,
   stopTimer,
+  clearBoard,
+  playerScore,
 } from '../slices/gameSlice'
 
 export default function GameBoard() {
   const dispatch = useDispatch()
   const games = useSelector((state: RootState) => state.games.value)
-  const [fallAnimation, setFallAnimation] = useState(true)
+  const [fallAnimation, setFallAnimation] = useState(false)
+  const [animation, setAnimation] = useState(false)
+  const [marker, setMarker] = useState(0)
   const [time, setTime] = useState(15)
+  const [turn, setTurn] = useState(false)
+  const [space, setSpace] = useState(false)
 
   const openMenu = () => {
     dispatch(menuToggle())
@@ -48,12 +54,78 @@ export default function GameBoard() {
   const handleColumn = (index: number) => {
     setTime(15)
     dispatch(addCounter(index))
-    dispatch(playerTurn())
+    if (games.boards[index].length !== 7) {
+      dispatch(playerTurn())
+    }
     dispatch(winCondition({ cols: index, rows: games.boards[index].length }))
+    setFallAnimation(false)
+    setAnimation((prev) => !prev)
+    setMarker(index)
+    console.log('Click index: ', index)
+    if (games.gameOver) {
+      dispatch(clearBoard())
+    }
+  }
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'ArrowLeft') {
+      if (marker > 0 && !games.gameOver) {
+        setMarker((prev) => prev - 1)
+        setTurn((prev) => !prev)
+      } else {
+        setTurn((prev) => !prev)
+      }
+    } else if (event.key === 'ArrowRight') {
+      if (marker < 6 && !games.gameOver) {
+        setMarker((prev) => prev + 1)
+        setTurn((prev) => !prev)
+      } else {
+        setTurn((prev) => !prev)
+      }
+    } else if (
+      event.key === 'Enter' ||
+      event.key === ' ' ||
+      event.key === 'ArrowDown'
+    ) {
+      if (!games.gameOver) {
+        setSpace((prev) => !prev)
+        handleColumn(marker)
+        console.log('marker keypress:', marker)
+      } else {
+        dispatch(playerScore())
+        dispatch(resetTimer(true))
+        dispatch(startTimer(true))
+        dispatch(stopTimer(false))
+        if (games.stalemate) {
+          dispatch(playerTurn())
+        }
+      }
+    }
+    document.removeEventListener('keydown', handleKeyDown)
   }
 
   useEffect(() => {
-    console.log(games.boards)
+    document.addEventListener('keydown', handleKeyDown)
+    console.log('searching for prey-------------')
+    console.log('event Marker:', marker)
+    // console.log('turn:', turn)
+    // console.log('space:', space)
+    // console.log('gameover:', games.gameOver)
+  }, [turn, space, games.gameOver])
+
+  //* keyboard movement (marker)
+  //* - marker click and space and teleports (handleColumn(marker) marker default is 0)
+  //* - play again with spacebar after gameover
+  //* - click gameover move spacebar
+  //* cpu algorithm
+  //* responsive design
+
+  useEffect(() => {
+    setFallAnimation((prev) => !prev)
+  }, [animation])
+
+  useEffect(() => {
+    // console.log(games.boards)
   }, [games.boards])
 
   const handleRestart = () => {
@@ -77,22 +149,15 @@ export default function GameBoard() {
     if (games.stopTimer) {
       clearInterval(intervalId)
     }
-
     if (time === 0) {
       clearInterval(intervalId)
       setTime(15)
       dispatch(playerTurn())
     }
-
     return () => {
       clearInterval(intervalId)
     }
   }, [games.startTimer, time, games.stopTimer])
-
-  // animation (marker)
-  // keyboard movement
-  // cpu algorithm
-  // responsive design
 
   return (
     <>
@@ -205,11 +270,19 @@ export default function GameBoard() {
                 return (
                   <div
                     key={index}
-                    className={` w-full cursor-pointer ${
+                    className={` w-full cursor-pointer flex justify-center ${
                       games.boards[index].length == 7 && 'pointer-events-none'
                     } `}
                     onClick={() => handleColumn(index)}
-                  ></div>
+                  >
+                    {index == marker && (
+                      <img
+                        src={games.playerTurn ? marker_yellow : marker_red}
+                        alt='marker_red'
+                        className={`absolute top-[145px] `}
+                      />
+                    )}
+                  </div>
                 )
               })}
             </div>

@@ -90,6 +90,9 @@ export const gameSlice = createSlice({
       state.value.playerOneScore = 0
       state.value.playerTwoScore = 0
     },
+    clearBoard: (state) => {
+      state.value.boards = [[''], [''], [''], [''], [''], [''], ['']]
+    },
     playerTurn: (state) => {
       state.value.playerTurn = !state.value.playerTurn
     },
@@ -110,21 +113,16 @@ export const gameSlice = createSlice({
       state.value.timer--
     },
     startTimer: (state, action: PayloadAction<boolean>) => {
-      console.log('time start')
       state.value.startTimer = action.payload
     },
     stopTimer: (state, action: PayloadAction<boolean>) => {
-      console.log('pause timer')
       state.value.stopTimer = action.payload
     },
     resetTimer: (state, action: PayloadAction<boolean>) => {
-      console.log('time reset')
       state.value.resetTimer = action.payload
     },
     winCondition: (state, action: PayloadAction<WinConditionPayload>) => {
       const { cols, rows } = action.payload
-      console.log('i:', cols)
-      console.log('j:', rows)
       // VERTICAL WIN CONDITION
       if (
         state.value.boards[cols][rows] === 'o' &&
@@ -286,5 +284,6 @@ export const {
   stopTimer,
   resetTimer,
   timer,
+  clearBoard,
 } = gameSlice.actions
 export default gameSlice.reducer
