@@ -28,8 +28,8 @@ Users should be able to:
 
 ### Links
 
-- Solution URL: [Add solution URL here](https://your-solution-url.com)
-- Live Site URL: [Add live site URL here](https://your-live-site-url.com)
+- Solution URL: [https://www.frontendmentor.io/solutions/connect-four-game-GKYNsiROda](https://www.frontendmentor.io/solutions/connect-four-game-GKYNsiROda)
+- Live Site URL: [https://connect-four-game-m1ctxyhbg-jinyoung5497.vercel.app/](https://connect-four-game-m1ctxyhbg-jinyoung5497.vercel.app/)
 
 ### Built with
 
