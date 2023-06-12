@@ -67,52 +67,52 @@ export default function GameBoard() {
     }
   }
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'ArrowLeft') {
-      if (marker > 0 && !games.gameOver) {
-        setMarker((prev) => prev - 1)
-        setTurn((prev) => !prev)
-      } else {
-        setTurn((prev) => !prev)
-      }
-    } else if (event.key === 'ArrowRight') {
-      if (marker < 6 && !games.gameOver) {
-        setMarker((prev) => prev + 1)
-        setTurn((prev) => !prev)
-      } else {
-        setTurn((prev) => !prev)
-      }
-    } else if (
-      event.key === 'Enter' ||
-      event.key === ' ' ||
-      event.key === 'ArrowDown'
-    ) {
-      if (!games.gameOver) {
-        setSpace((prev) => !prev)
-        handleColumn(marker)
-        // console.log('marker keypress:', marker)
-      } else {
-        dispatch(playerScore())
-        dispatch(resetTimer(true))
-        dispatch(startTimer(true))
-        dispatch(stopTimer(false))
-        if (games.stalemate) {
-          dispatch(playerTurn())
-        }
-      }
-    }
-    console.log('current marker position:', marker)
-    document.removeEventListener('keydown', handleKeyDown)
-  }
+  // const handleKeyDown = (event: KeyboardEvent) => {
+  //   if (event.key === 'ArrowLeft') {
+  //     if (marker > 0 && !games.gameOver) {
+  //       setMarker((prev) => prev - 1)
+  //       setTurn((prev) => !prev)
+  //     } else {
+  //       setTurn((prev) => !prev)
+  //     }
+  //   } else if (event.key === 'ArrowRight') {
+  //     if (marker < 6 && !games.gameOver) {
+  //       setMarker((prev) => prev + 1)
+  //       setTurn((prev) => !prev)
+  //     } else {
+  //       setTurn((prev) => !prev)
+  //     }
+  //   } else if (
+  //     event.key === 'Enter' ||
+  //     event.key === ' ' ||
+  //     event.key === 'ArrowDown'
+  //   ) {
+  //     if (!games.gameOver) {
+  //       setSpace((prev) => !prev)
+  //       handleColumn(marker)
+  //       console.log('marker keypress:', marker)
+  //     } else {
+  //       dispatch(playerScore())
+  //       dispatch(resetTimer(true))
+  //       dispatch(startTimer(true))
+  //       dispatch(stopTimer(false))
+  //       if (games.stalemate) {
+  //         dispatch(playerTurn())
+  //       }
+  //     }
+  //   }
+  //   console.log('current marker position:', marker)
+  //   document.removeEventListener('keydown', handleKeyDown)
+  // }
 
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyDown)
-    // console.log('searching for prey-------------')
-    // console.log('event Marker:', marker)
-    // console.log('turn:', turn)
-    // console.log('space:', space)
-    // console.log('gameover:', games.gameOver)
-  }, [turn, space, games.gameOver])
+  // useEffect(() => {
+  //   document.addEventListener('keydown', handleKeyDown)
+  //   console.log('searching for prey-------------')
+  //   // console.log('event Marker:', marker)
+  //   // console.log('turn:', turn)
+  //   // console.log('space:', space)
+  //   // console.log('gameover:', games.gameOver)
+  // }, [turn, space, games.gameOver])
 
   //* keyboard movement (marker)
   //* - marker click and space and teleports (handleColumn(marker) marker default is 0)
@@ -275,6 +275,7 @@ export default function GameBoard() {
                       games.boards[index].length == 7 && 'pointer-events-none'
                     } `}
                     onClick={() => handleColumn(index)}
+                    id='columns'
                   >
                     {index == marker && (
                       <img
