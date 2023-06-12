@@ -90,7 +90,7 @@ export default function GameBoard() {
       if (!games.gameOver) {
         setSpace((prev) => !prev)
         handleColumn(marker)
-        console.log('marker keypress:', marker)
+        // console.log('marker keypress:', marker)
       } else {
         dispatch(playerScore())
         dispatch(resetTimer(true))
@@ -101,13 +101,14 @@ export default function GameBoard() {
         }
       }
     }
+    console.log('current marker position:', marker)
     document.removeEventListener('keydown', handleKeyDown)
   }
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown)
-    console.log('searching for prey-------------')
-    console.log('event Marker:', marker)
+    // console.log('searching for prey-------------')
+    // console.log('event Marker:', marker)
     // console.log('turn:', turn)
     // console.log('space:', space)
     // console.log('gameover:', games.gameOver)
